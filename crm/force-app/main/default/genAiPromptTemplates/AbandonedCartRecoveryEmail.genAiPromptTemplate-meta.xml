@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Generates a casual, friendly abandoned cart recovery email body for B2C shoppers.</description>
+    <developerName>AbandonedCartRecoveryEmail</developerName>
+    <masterLabel>Abandoned Cart Recovery Email</masterLabel>
+    <templateVersions>
+        <content>You are writing a short, friendly cart recovery email for an online store.
+
+Customer name: {!$Input:firstName}
+Cart contents: {!$Input:cartData}
+
+Write a short email body (3-5 sentences max) directly addressed to the customer by first name.
+Tone: ultra-casual, warm, modern — like a text from a friend, not a marketing blast.
+Do NOT include a subject line. Do NOT include sign-off or store name — that will be added separately.
+Mention one or two specific items from the cart to make it feel personal.
+End with a gentle nudge to come back and complete the purchase.</content>
+        <inputs>
+            <apiName>firstName</apiName>
+            <definition>SObject:Lead.FirstName</definition>
+            <masterLabel>firstName</masterLabel>
+            <referenceName>firstName</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>cartData</apiName>
+            <definition>SObject:Lead.Cart_Data__c</definition>
+            <masterLabel>cartData</masterLabel>
+            <referenceName>cartData</referenceName>
+            <required>true</required>
+        </inputs>
+        <status>Published</status>
+        <versionIdentifier>1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

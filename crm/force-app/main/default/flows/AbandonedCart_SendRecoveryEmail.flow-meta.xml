@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <label>Abandoned Cart - Send Recovery Email</label>
+    <status>Active</status>
+    <interviewLabel>Abandoned Cart - Send Recovery Email {!$Flow.CurrentDateTime}</interviewLabel>
+    <processType>AutoLaunchedFlow</processType>
+
+    <start>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>Lead</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+        <scheduledPaths>
+            <name>ScheduledPath_AfterDelay</name>
+            <connector>
+                <targetReference>Get_FreshLead</targetReference>
+            </connector>
+            <offsetNumber>30</offsetNumber>
+            <offsetUnit>Minutes</offsetUnit>
+            <recordField>CreatedDate</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+    </start>
+
+    <!-- Re-fetch Lead to get current Status -->
+    <recordLookups>
+        <name>Get_FreshLead</name>
+        <label>Get Fresh Lead</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_StillAbandoned</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Lead</object>
+        <outputAssignments>
+            <assignToReference>var_FreshStatus</assignToReference>
+            <field>Status</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>var_FreshEmail</assignToReference>
+            <field>Email</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>var_FreshFirstName</assignToReference>
+            <field>FirstName</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>var_FreshCartData</assignToReference>
+            <field>Cart_Data__c</field>
+        </outputAssignments>
+    </recordLookups>
+
+    <!-- Decision: skip if already Converted -->
+    <decisions>
+        <name>Check_StillAbandoned</name>
+        <label>Still Abandoned?</label>
+        <locationX>176</locationX>
+        <locationY>278</locationY>
+        <defaultConnectorLabel>Converted — Skip</defaultConnectorLabel>
+        <rules>
+            <name>Is_StillAbandoned</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_FreshStatus</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Converted</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Generate_EmailBody</targetReference>
+            </connector>
+            <label>Yes — Still Abandoned</label>
+        </rules>
+    </decisions>
+
+    <!-- Agentforce Prompt Builder: generate recovery email body -->
+    <actionCalls>
+        <name>Generate_EmailBody</name>
+        <label>Generate Recovery Email Body</label>
+        <locationX>176</locationX>
+        <locationY>422</locationY>
+        <actionName>AbandonedCartRecoveryEmail</actionName>
+        <actionType>generatePromptResponse</actionType>
+        <connector>
+            <targetReference>Send_RecoveryEmail</targetReference>
+        </connector>
+        <inputParameters>
+            <name>firstName</name>
+            <value>
+                <elementReference>var_FreshFirstName</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>cartData</name>
+            <value>
+                <elementReference>var_FreshCartData</elementReference>
+            </value>
+        </inputParameters>
+        <outputParameters>
+            <assignToReference>var_GeneratedEmailBody</assignToReference>
+            <name>generatedText</name>
+        </outputParameters>
+    </actionCalls>
+
+    <!-- Send the generated email -->
+    <actionCalls>
+        <name>Send_RecoveryEmail</name>
+        <label>Send Recovery Email</label>
+        <locationX>176</locationX>
+        <locationY>566</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>var_FreshEmail</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <stringValue>Hey, you left something behind!</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>var_GeneratedEmailBody</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+
+    <!-- Variables -->
+    <variables>
+        <name>var_FreshStatus</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_FreshEmail</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_FreshFirstName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_FreshCartData</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_GeneratedEmailBody</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+</Flow>
