@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <type-extension type-id="SitePreferences">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="abandonCartEnabled">
+                <display-name xml:lang="x-default">Abandon Cart - Enabled</display-name>
+                <description xml:lang="x-default">Enables the abandon cart integration with Salesforce Core. Set to true to activate API calls on checkout email submission and order placement.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="abandonCartApiPath">
+                <display-name xml:lang="x-default">Abandon Cart - API Path</display-name>
+                <description xml:lang="x-default">REST API path on Salesforce Core for the abandon cart endpoint (e.g. /services/apexrest/abandonedcart). The base URL is configured in the B2C Service Framework under abandon.cart.api credentials.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>/services/apexrest/abandonedcart</default-value>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
+    <type-extension type-id="Order">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="originalBasketUUID">
+                <display-name xml:lang="x-default">Original Basket UUID</display-name>
+                <description xml:lang="x-default">The UUID of the basket from which this order was created. Used to correlate the placed order with the abandon cart Lead in Salesforce Core.</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
+</metadata>

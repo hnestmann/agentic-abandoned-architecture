@@ -1,0 +1,6 @@
+{
+    "name": "plugin_abandon_cart",
+    "version": "1.0.0",
+    "description": "Abandoned cart integration plugin for SFRA — syncs cart and checkout completion to Salesforce Core",
+    "main": "index.js"
+}

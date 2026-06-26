@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns="http://www.demandware.com/xml/impex/services/2014-09-26">
+
+    <!-- ==================== Credentials ==================== -->
+
+    <service-credential service-credential-id="abandon.cart.api.cred">
+        <!-- Set URL to the Salesforce Core instance base URL, e.g. https://your-org.my.salesforce.com -->
+        <url>https://your-org.my.salesforce.com</url>
+        <user-id></user-id>
+        <password></password>
+    </service-credential>
+
+    <service-credential service-credential-id="abandon.cart.oauth.cred">
+        <!-- Set URL to the Salesforce Core OAuth2 token endpoint -->
+        <!-- user = Connected App client_id, password = Connected App client_secret -->
+        <url>https://your-org.my.salesforce.com/services/oauth2/token</url>
+        <user-id>YOUR_CLIENT_ID</user-id>
+        <password>YOUR_CLIENT_SECRET</password>
+    </service-credential>
+
+    <!-- ==================== Profiles ==================== -->
+
+    <service-profile service-profile-id="abandon.cart.api.profile">
+        <timeout-millis>100000</timeout-millis>
+        <rate-limit-enabled>false</rate-limit-enabled>
+        <rate-limit-calls>0</rate-limit-calls>
+        <rate-limit-millis>0</rate-limit-millis>
+        <cb-enabled>false</cb-enabled>
+        <cb-calls>0</cb-calls>
+        <cb-millis>0</cb-millis>
+    </service-profile>
+
+    <service-profile service-profile-id="abandon.cart.oauth.profile">
+        <timeout-millis>100000</timeout-millis>
+        <rate-limit-enabled>false</rate-limit-enabled>
+        <rate-limit-calls>0</rate-limit-calls>
+        <rate-limit-millis>0</rate-limit-millis>
+        <cb-enabled>false</cb-enabled>
+        <cb-calls>0</cb-calls>
+        <cb-millis>0</cb-millis>
+    </service-profile>
+
+    <!-- ==================== Services ==================== -->
+
+    <service service-id="abandon.cart.api">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>adyen</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>abandon.cart.api.profile</profile-id>
+        <credential-id>abandon.cart.api.cred</credential-id>
+    </service>
+
+    <service service-id="abandon.cart.oauth">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>adyen</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>abandon.cart.oauth.profile</profile-id>
+        <credential-id>abandon.cart.oauth.cred</credential-id>
+    </service>
+
+</services>
